@@ -37,7 +37,7 @@ extension NSDateFormatter {
     
     class func dateToCell(date : NSDate) -> NSString {
         var dateFormatter = NSDateFormatter()
-        dateFormatter.dateFormat = "MM/dd/YY, EEEE"
+        dateFormatter.dateFormat = "MM/dd/YY"
         
         return dateFormatter.stringFromDate(date)
         
