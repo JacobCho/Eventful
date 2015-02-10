@@ -60,8 +60,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         self.startDateTextField.delegate = self
         self.endDateTextField.delegate = self
         
-        self.startDateTextField.text = NSDateFormatter.formatToShortStyle(today)
-        self.endDateTextField.text = NSDateFormatter.formatToShortStyle(today.addDays(1))
+        self.startDateTextField.text = NSDateFormatter.formatToShortStyle(today) as! String
+        self.endDateTextField.text = NSDateFormatter.formatToShortStyle(today.addDays(1)) as! String
         
     }
     
@@ -89,7 +89,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 APIStrings.EFKeywordMethod + category +
                 APIStrings.EFLocationMethod + self.addressCoordinates! +
                 APIStrings.EFWithinMethod + self.radiusTextField.text +
-                APIStrings.EFDateMethod + NSString.prepDatesForJSON(self.startDateTextField.text, endDate: self.endDateTextField.text) +
+                APIStrings.EFDateMethod +
+            NSString.prepDatesForJSON(self.startDateTextField.text, endDate: self.endDateTextField.text) +
                 APIStrings.EFSortOrderMethod + "popularity" + APIStrings.EFPageSizeMethod + "50"
         
         let url = NSURL(string: urlString)
@@ -109,9 +110,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 if let eventsDictionary = dataDictionary["events"] as? NSDictionary {
                     if let eventsList = eventsDictionary["event"] as? NSArray {
                         for event in eventsList {
-                            var newEvent = Event(title: event["title"] as NSString,
-                                venue: event["venue_name"] as NSString,
-                                date: event["start_time"] as NSString)
+                            var newEvent = Event(title: event["title"] as! NSString,
+                                venue: event["venue_name"] as! NSString,
+                                date: event["start_time"] as! NSString)
                             newEvent.latitude = event["latitude"] as? NSString
                             newEvent.longitude = event["longitude"] as? NSString
                             
@@ -125,11 +126,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                                 newEvent.performers = []
                                 if let performersArray = performers["performer"] as? NSArray {
                                     for performer in performersArray {
-                                        newEvent.performers?.append(performer["name"] as NSString)
+                                        newEvent.performers?.append(performer["name"] as! String)
                                     }
                                 }
                                 if let performer = performers["performer"] as? NSDictionary {
-                                    newEvent.performers?.append(performer["name"] as NSString)
+                                    newEvent.performers?.append(performer["name"] as! String)
                                 }
                             }
                             
@@ -157,7 +158,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func loadImageInBackground(event : Event, cell : EventTableViewCell) {
-        let url = NSURL(string: event.imageURL!)
+        let url = NSURL(string: event.imageURL! as! String)
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             let data = NSData(contentsOfURL: url!, options: nil, error: nil)
@@ -182,27 +183,32 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             if let dataDictionary : NSDictionary = NSJSONSerialization.JSONObjectWithData(data!, options: nil, error: &jsonError) as? NSDictionary {
                 if let locationArray = dataDictionary["results"] as? NSArray {
                     if locationArray.count > 0 {
-                        let firstResult : NSDictionary = locationArray[0] as NSDictionary
+                        let firstResult : NSDictionary = locationArray[0] as! NSDictionary
                         if let geometry = firstResult["geometry"] as? NSDictionary {
                             if let location = geometry["location"] as? NSDictionary {
                                 lat = location["lat"] as? Double
                                 lng = location["lng"] as? Double
-                                self.addressCoordinates = NSString(format: "%f", lat!) + "," + NSString(format: "%f", lng!)
-
+                                if let latitude = lat, longitude = lng {
+                                    self.addressCoordinates = String(stringInterpolationSegment: latitude) + "," + String(stringInterpolationSegment: longitude)
+                                    
+                                    dispatch_async(dispatch_get_main_queue()) {
+                                        self.validAddress = true
+                                        self.checkAllValid()
+                                        self.addressErrorLabel.alpha = 0
+                                    }
+                                }
                             }
                         }
                     } else {
+                        dispatch_async(dispatch_get_main_queue()) {
                         // No location results
                         self.validAddress = false
                         self.checkAllValid()
                         self.addressErrorLabel.alpha = 1
+                        }
                     }
                 }
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.validAddress = true
-                    self.checkAllValid()
-                    self.addressErrorLabel.alpha = 0
-                }
+                
             }
             else {
                 if let error = jsonError {
@@ -221,7 +227,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     // MARK: Table View Delegate
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-       let mapViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("MapViewController") as MapViewController
+       let mapViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("MapViewController") as! MapViewController
         mapViewController.event = self.eventsArray[indexPath.row]
         self.navigationController?.pushViewController(mapViewController, animated: true)
     }
@@ -238,16 +244,16 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell : EventTableViewCell = tableView.dequeueReusableCellWithIdentifier("EventCell", forIndexPath: indexPath) as EventTableViewCell
+        var cell : EventTableViewCell = tableView.dequeueReusableCellWithIdentifier("EventCell", forIndexPath: indexPath) as! EventTableViewCell
         
         // Reset image 
         cell.eventImageView.image = nil
         
         let event = eventsArray[indexPath.row]
-        cell.titleLabel.text = event.title
-        cell.venueLabel.text = event.venue
+        cell.titleLabel.text = event.title as! String
+        cell.venueLabel.text = event.venue as! String
         var eventDate = NSDateFormatter.dateFromEventful(event.date)
-        cell.dateLabel.text = NSDateFormatter.dateToCell(eventDate)
+        cell.dateLabel.text = NSDateFormatter.dateToCell(eventDate) as! String
         
         
         // If the event has an image, load in background
@@ -261,19 +267,19 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
         // If event has a performers list, add to label
         if let performers = event.performers {
-            var performersList : NSString = ""
+            var performersList : String = ""
             if performers.count == 1 {
                 performersList = performers[0]
             } else {
                 for performer in performers {
                     if performer == performers.last {
-                        performersList = performersList + performer
+                        performersList = (performersList + performer)
                     } else {
-                        performersList = performersList + performer + ", "
+                        performersList = (performersList + performer) + ", "
                     }
                 }
             }
-            cell.performersLabel.text = performersList
+            cell.performersLabel.text = performersList as! String
         } else {
             cell.performersLabel.text = ""
         }
@@ -291,7 +297,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     // If user touches outside the keyboard, resign keyboard
-    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
         self.view.endEditing(true)
     }
     
@@ -370,7 +376,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     func checkRadius(radius : NSString) {
         
         let numSet = NSCharacterSet.alphanumericCharacterSet()
-        let stringSet = NSCharacterSet(charactersInString: radius)
+        let stringSet = NSCharacterSet(charactersInString: radius as! String)
         // Check if string is alphanumeric
         if numSet.isSupersetOfSet(stringSet) {
             
@@ -409,9 +415,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             var date = datePickerView.date
             
             if sender == self.startDateButton {
-                self.startDateTextField.text = NSDateFormatter.formatToShortStyle(date)
+                self.startDateTextField.text = NSDateFormatter.formatToShortStyle(date) as! String
             } else {
-                self.endDateTextField.text = NSDateFormatter.formatToShortStyle(date)
+                self.endDateTextField.text = NSDateFormatter.formatToShortStyle(date) as! String
             }
             
             self.checkDates(self.startDateTextField.text, endDateString: self.endDateTextField.text)

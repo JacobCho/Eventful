@@ -19,7 +19,7 @@ class Event: NSObject {
     var title : NSString
     var venue : NSString
     var date : NSString
-    var performers : [NSString]?
+    var performers : [String]?
     var imageURL : NSString?
     var image : UIImage?
     var type : Category?

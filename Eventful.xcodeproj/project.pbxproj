@@ -32,8 +32,6 @@
 		52B2D6121A8040B100499FBF /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B2D6101A803E8D00499FBF /* MapViewController.swift */; };
 		52B2D6141A8042AA00499FBF /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52B2D6131A8042AA00499FBF /* MapKit.framework */; };
 		52B2D6181A805FA000499FBF /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52B2D6131A8042AA00499FBF /* MapKit.framework */; };
-		52B2D61A1A80919500499FBF /* EventMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B2D6191A80919500499FBF /* EventMarker.swift */; };
-		52B2D61B1A8092FB00499FBF /* EventMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B2D6191A80919500499FBF /* EventMarker.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,7 +66,6 @@
 		52B2D60E1A7D990400499FBF /* ViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewControllerTests.swift; sourceTree = "<group>"; };
 		52B2D6101A803E8D00499FBF /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		52B2D6131A8042AA00499FBF /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
-		52B2D6191A80919500499FBF /* EventMarker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventMarker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,7 +113,6 @@
 				5255DC091A78910600849309 /* AppDelegate.swift */,
 				5255DC0B1A78910600849309 /* ViewController.swift */,
 				52B2D6101A803E8D00499FBF /* MapViewController.swift */,
-				52B2D6191A80919500499FBF /* EventMarker.swift */,
 				5255DC2F1A7AFBA400849309 /* NSDateFormatterExtension.swift */,
 				5255DC311A7B188E00849309 /* NSDateExtension.swift */,
 				5255DC2D1A79CDF600849309 /* NSStringExtension.swift */,
@@ -275,7 +271,6 @@
 				5255DC2E1A79CDF600849309 /* NSStringExtension.swift in Sources */,
 				5255DC0A1A78910600849309 /* AppDelegate.swift in Sources */,
 				52B2D6111A803E8D00499FBF /* MapViewController.swift in Sources */,
-				52B2D61A1A80919500499FBF /* EventMarker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -292,7 +287,6 @@
 				52B2D6091A7D77B100499FBF /* NSDateExtension.swift in Sources */,
 				52B2D6121A8040B100499FBF /* MapViewController.swift in Sources */,
 				52B2D60D1A7D91DF00499FBF /* NSDateExtensionTests.swift in Sources */,
-				52B2D61B1A8092FB00499FBF /* EventMarker.swift in Sources */,
 				52B2D6081A7D77AD00499FBF /* EventTableViewCell.swift in Sources */,
 				52B2D6071A7D77A900499FBF /* Event.swift in Sources */,
 				52B2D6021A7D773900499FBF /* NSStringExtension.swift in Sources */,

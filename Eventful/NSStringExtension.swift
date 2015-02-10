@@ -11,14 +11,14 @@ import UIKit
 
 extension NSString {
     
-    class func prepForJSON(string: NSString) -> NSString {
+    class func prepForJSON(string: NSString) -> String {
         let noCommas = string.stringByReplacingOccurrencesOfString(",", withString: "")
         let noSpaces = noCommas.stringByReplacingOccurrencesOfString(" ", withString: "+")
         
        return noSpaces
     }
     
-    class func prepDatesForJSON(startDate : NSString, endDate : NSString) -> NSString {
+    class func prepDatesForJSON(startDate : NSString, endDate : NSString) -> String {
         var start = NSDateFormatter.dateFromShortStyleString(startDate)
         var end = NSDateFormatter.dateFromShortStyleString(endDate)
         

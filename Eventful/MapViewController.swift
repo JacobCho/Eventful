@@ -37,15 +37,22 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             self.mapView.setRegion(region, animated: true)
             
             self.setupMarker(startingLocation, event: mapEvent)
-            
         }
         
     }
     
     func setupMarker(location : CLLocationCoordinate2D, event : Event) {
         
-        var marker = EventMarker(coordinate: location, title: event.title, subtitle: event.venue)
+        var marker = MKPointAnnotation()
+        marker.coordinate = location
+        marker.title = event.title as! String
+        marker.subtitle = event.venue as! String
+    
         
         self.mapView.addAnnotation(marker)
     }
+    
+
+    
+
 }
