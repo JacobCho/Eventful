@@ -383,7 +383,7 @@
                                                 <variation key="widthClass=compact" constant="15"/>
                                             </constraint>
                                             <constraint firstAttribute="height" constant="22" id="QwG-yC-zlA">
-                                                <variation key="widthClass=compact" constant="15"/>
+                                                <variation key="widthClass=compact" constant="30"/>
                                             </constraint>
                                         </constraints>
                                         <state key="normal" backgroundImage="categoryIcon"/>
@@ -954,7 +954,7 @@
     </scenes>
     <resources>
         <image name="calendarEndIcon" width="9" height="10"/>
-        <image name="calendarStartIcon" width="9" height="10"/>
-        <image name="categoryIcon" width="9" height="6"/>
+        <image name="calendarStartIcon" width="150" height="124"/>
+        <image name="categoryIcon" width="33" height="91"/>
     </resources>
 </document>

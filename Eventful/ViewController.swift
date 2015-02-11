@@ -370,7 +370,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     func enableSearchButton() {
         self.searchButton.enabled = true
-        self.searchButton.backgroundColor = UIColor.blueColor()
+        self.searchButton.backgroundColor = UIColor(red: 76.0/255.0, green: 175.0/255.0, blue: 80.0/255.0, alpha: 1)
     }
     
     func checkRadius(radius : NSString) {
