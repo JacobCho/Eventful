@@ -19,6 +19,7 @@ struct APIStrings {
     static let EFWithinMethod = "&within="
     static let EFSortOrderMethod = "&sort_order="
     static let EFPageSizeMethod = "&page_size="
+    static let EFPageNumber = "&page_number="
     
     // Google Geocoding API URL Strings
     static let GGApiRoot = "https://maps.googleapis.com/maps/api/geocode/json?"
@@ -48,6 +49,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     var validDates = true
     
     var eventsArray : [Event] = []
+    var pageNumber : Int = 1
+    var isFetching = false
     var addressCoordinates : String?
     let categoryPickerArray = ["Music", "Sports", "Performing Arts"]
     let today = NSDate()
@@ -83,26 +86,17 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         // Clear eventsArray
         self.eventsArray.removeAll(keepCapacity: true)
         
-        var category = self.categoryTextField.text.stringByReplacingOccurrencesOfString(" ", withString:"")
+        // Reset pagenumber
+        self.pageNumber = 1
         
-        var urlString = APIStrings.EFApiRoot + APIStrings.EFApiKey +
-                APIStrings.EFKeywordMethod + category +
-                APIStrings.EFLocationMethod + self.addressCoordinates! +
-                APIStrings.EFWithinMethod + self.radiusTextField.text +
-                APIStrings.EFDateMethod +
-            NSString.prepDatesForJSON(self.startDateTextField.text, endDate: self.endDateTextField.text) +
-                APIStrings.EFSortOrderMethod + "popularity" + APIStrings.EFPageSizeMethod + "50"
-        
-        let url = NSURL(string: urlString)
-        
-        self.getEventsInBackground(url!)
+        self.getEventsInBackground(self.getEventfulURL()!)
     }
     
     
     // MARK: Networking Methods 
     
     func getEventsInBackground(url : NSURL) {
-        
+        self.isFetching = true
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             let data = NSData(contentsOfURL: url, options: nil, error: nil)
             var jsonError : NSError?
@@ -140,9 +134,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 }
                 
                 dispatch_async(dispatch_get_main_queue()) {
-                    
-                    self.eventsArray.sort({ $0.date < $1.date as String})
-
+                    self.isFetching = false
                     self.tableView.reloadData()
                 }
             
@@ -279,7 +271,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                     }
                 }
             }
-            cell.performersLabel.text = performersList as! String
+            cell.performersLabel.text = performersList
         } else {
             cell.performersLabel.text = ""
         }
@@ -294,6 +286,22 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         textField.resignFirstResponder()
 
         return true
+    }
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        let currentOffset = scrollView.contentOffset.y
+        let maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height
+        
+        if maximumOffset - currentOffset <= 10 {
+            
+            if self.checkAllValid() && !self.isFetching {
+                self.pageNumber++
+                
+                self.getEventsInBackground(self.getEventfulURL()!)
+
+            }
+            
+        }
     }
     
     // If user touches outside the keyboard, resign keyboard
@@ -348,17 +356,34 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
     
     // MARK: Helper Methods
-    func checkAllValid() {
+    func getEventfulURL() -> NSURL? {
+        var category = self.categoryTextField.text.stringByReplacingOccurrencesOfString(" ", withString:"")
+        var urlString = APIStrings.EFApiRoot + APIStrings.EFApiKey +
+            APIStrings.EFKeywordMethod + category +
+            APIStrings.EFLocationMethod + self.addressCoordinates! +
+            APIStrings.EFWithinMethod + self.radiusTextField.text +
+            APIStrings.EFDateMethod +
+            NSString.prepDatesForJSON(self.startDateTextField.text, endDate: self.endDateTextField.text) +
+            APIStrings.EFSortOrderMethod + "popularity" +
+            APIStrings.EFPageNumber + String(self.pageNumber)
+        
+        
+        return NSURL(string: urlString)
+    }
+    
+    func checkAllValid() -> Bool {
         let validSearchArray = [self.validAddress, self.validRadius, self.validDates]
         var allValid = true
         for valid in validSearchArray {
             if valid as Bool == false {
                 allValid = false
                 self.disableSearchButton()
+                return false
             }
         }
         if allValid == true {
             self.enableSearchButton()
+            return true
         }
         
     }
